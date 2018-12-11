@@ -10,7 +10,7 @@
 #include "examples.h"
 
 int main() {
-	cv::Mat srcMat = cv::imread("./samples/sample2_0.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat srcMat = cv::imread("lena.bmp", cv::IMREAD_GRAYSCALE);
 	cv::Mat opencvResult, ourResult;
 	const int THRESHOLD = 125;
 
