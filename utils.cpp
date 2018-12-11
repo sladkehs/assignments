@@ -8,6 +8,50 @@ namespace IPCVL {
 			return floor((a * q) / L);
 		}
 
+		double make_u(cv::InputArray src, double *histogram)
+		{
+			cv::Mat inputMat = src.getMat();
+			calcNormedHist(src, histogram);
+			double general_u = 0;
+			for (int i = 0; i < 256; i++)
+			{
+				general_u = general_u + (i * histogram[i]);
+			}
+
+			return general_u;
+		}
+
+		void makeBtoL(cv::InputArray src, cv::OutputArray dst)
+		{
+			dst.create(src.size(), CV_32SC1);
+			cv::Mat srcMat = src.getMat();
+			cv::Mat output = dst.getMat();
+
+			for (int i = 0; i < srcMat.rows; i++)
+			{
+				for (int j = 0; j < srcMat.cols; j++)
+				{
+					if (i == 0 || i == (srcMat.rows - 1) || j == 0 || j == (srcMat.cols - 1))
+					{
+						output.at<int>(i, j) = 0;
+						//std::cout << output.at<int>(i, j) << std::endl;
+						continue;
+					}
+
+					if (srcMat.at<uchar>(i, j) == 0)
+					{
+						output.at<int>(i, j) = 0;
+					}
+					else if (srcMat.at<uchar>(i, j) == 255)
+					{
+						output.at<int>(i, j) = -1;
+					}
+				}
+			}
+
+		}
+
+
 		double h_r(double model_hist[][64], double input_hist[][64], int j, int i) {
 			double h_m = model_hist[j][i];
 			double h_i = input_hist[j][i];
@@ -44,7 +88,7 @@ namespace IPCVL {
 
 			for (int y = 0; y < inputMat.rows; y++) {
 				for (int x = 0; x < inputMat.cols; x++) {
-					histogram[(int)inputMat.at<uchar>(y, x)]++;
+					histogram[inputMat.at<uchar>(y, x)]++;
 				}
 			}
 
